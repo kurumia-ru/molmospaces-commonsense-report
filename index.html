@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MugBallPick — ボールが入っているマグを取る</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eef2f0;
+      --ink: #1b1f1c;
+      --muted: #5c6560;
+      --line: #c9d2cc;
+      --card: #fbfcfb;
+      --ok: #0b6b45;
+      --bad: #8a2f2f;
+      --accent: #1f4d3a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Noto Sans JP", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 380px at 0% -10%, #d5e6dc 0%, transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3.5rem; }
+    h1 { font-size: 1.45rem; margin: 0 0 0.4rem; }
+    h2 { font-size: 1.08rem; margin: 1.8rem 0 0.6rem; }
+    p.lead { color: var(--muted); margin: 0 0 1.1rem; max-width: 44rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--line);
+      font-size: 0.88rem;
+      margin-bottom: 0.85rem;
+    }
+    th, td { padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #e5ebe7; font-weight: 600; }
+    table.kv th { width: 9.5rem; }
+    .ok { color: var(--ok); font-weight: 700; }
+    .bad { color: var(--bad); font-weight: 700; }
+    .muted { color: var(--muted); }
+    code {
+      font-size: 0.84em;
+      background: #e5ebe7;
+      padding: 0.05rem 0.3rem;
+    }
+    figure {
+      margin: 0 0 0.85rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+    video, img { width: 100%; display: block; background: #111; }
+    figcaption { padding: 0.4rem 0.55rem; font-size: 0.8rem; color: var(--muted); }
+    a { color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.7rem;
+    }
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7rem;
+    }
+    @media (max-width: 720px) {
+      .grid, .grid3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>ボールが入っているマグを取る</h1>
+  <p class="lead">
+    MolmoSpaces CommonSense の MugBallPick。
+    逆さまのマグが 2 つあり、片方の下にボールがある。
+    「ボールが下にあるマグ」を取り上げる課題。
+    遠隔操作なし。DROID planner。p-ws-40、2026-11-09。
+  </p>
+  <p class="muted">
+    論文の 8 課題のうち 1 課題。Hugging Face の 13 TB は落としていない。
+  </p>
+
+  <h2>条件</h2>
+  <table class="kv">
+    <tr><th>課題</th><td>MugBallPick（覆い / 物体の永続性）</td></tr>
+    <tr><th>指示</th><td><code>Pick up the mug with the ball under it.</code></td></tr>
+    <tr><th>環境</th><td>MolmoSpaces · iTHOR（Objaverse なし）</td></tr>
+    <tr><th>ロボット</th><td>DROID Franka FR3 + Robotiq</td></tr>
+    <tr><th>操作</th><td>oracle PickPlannerPolicy</td></tr>
+    <tr><th>成功</th><td>ボール付きマグを把持して持ち上げる</td></tr>
+    <tr><th>サーバー</th><td>p-ws-40 · GPU 6（physnorm 学習の GPU 4 / 7 は未使用）</td></tr>
+    <tr><th>アセット</th><td>オンデマンド約 13 GB。全データ 13 TB は未取得</td></tr>
+  </table>
+
+  <h2>結果</h2>
+  <table>
+    <thead>
+      <tr><th>実行</th><th>家</th><th>成功</th><th>ログ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Run 1 · seed 2</td><td>1</td><td class="bad">0 / 0</td><td>リフト IK 失敗、把持後にスリップ</td></tr>
+      <tr><td>Run 2 · seed 7</td><td>5</td><td class="ok">2 / 2</td><td>配置エラーのあとリトライ成功</td></tr>
+      <tr><td>Run 2 · seed 7</td><td>10</td><td class="ok">2 / 2</td><td>途中 1 本はリフト IK 失敗</td></tr>
+      <tr><td>Run 2 · seed 7</td><td>15</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
+      <tr><td>Run 2 · seed 7</td><td>20</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
+      <tr><td>Run 2 · seed 7</td><td>25</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">
+    成功軌跡だけ保存しているので、成功率 100% は「残した軌跡のうち成功した割合」。
+    試行全体ではない。本実行は 333 秒。
+  </p>
+
+  <h2>動画（house 5 episode 0）</h2>
+  <figure>
+    <video controls playsinline autoplay muted loop>
+      <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
+    </video>
+    <figcaption>左: exo · 右: wrist · 約 9 秒</figcaption>
+  </figure>
+  <div class="grid">
+    <figure>
+      <video controls playsinline>
+        <source src="house5_ep0_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>exo</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline>
+        <source src="house5_ep0_wrist.mp4" type="video/mp4" />
+      </video>
+      <figcaption>wrist</figcaption>
+    </figure>
+  </div>
+
+  <h2>静止画</h2>
+  <div class="grid3">
+    <figure>
+      <img src="start_exo.jpg" alt="開始時の exo。逆さまのマグ 2 つと黄色いボール。" />
+      <figcaption>開始。逆さまのマグ 2 つ。</figcaption>
+    </figure>
+    <figure>
+      <img src="lift_exo.jpg" alt="マグを持ち上げている exo。" />
+      <figcaption>持ち上げ。planner が把持してリフト。</figcaption>
+    </figure>
+    <figure>
+      <img src="lift_wrist.jpg" alt="手首カメラからマグを掴んでいる。" />
+      <figcaption>wrist。グリッパがマグを保持。</figcaption>
+    </figure>
+  </div>
+
+  <h2>ほかの成功クリップ</h2>
+  <div class="grid">
+    <figure>
+      <video controls playsinline>
+        <source src="house5_ep1_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 5 episode 1 · exo</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline>
+        <source src="house10_ep0_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 10 episode 0 · exo</figcaption>
+    </figure>
+  </div>
+
+  <h2>失敗の中身</h2>
+  <table>
+    <thead>
+      <tr><th></th><th>内容</th><th>どこ</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IK</td>
+        <td>高い iTHOR カウンター（マグ z ≈ 1.26 m）でリフト姿勢が解けない</td>
+        <td>家 1 · 家 10</td>
+      </tr>
+      <tr>
+        <td>把持</td>
+        <td>持ち上げ中にマグが滑る（指間距離 0.00155 &lt; 0.002）</td>
+        <td>家 1</td>
+      </tr>
+      <tr>
+        <td>配置</td>
+        <td>マグを置けない家がある</td>
+        <td>家 15 · 20 · 25</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>まだやっていないこと</h2>
+  <table>
+    <thead>
+      <tr><th></th><th>状態</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>π0.5 ゼロショット</td><td class="muted">未着手</td></tr>
+      <tr><td>Pick Occlusion など残りの CommonSense 課題</td><td class="muted">未着手</td></tr>
+      <tr><td>公式 7000 JSON</td><td class="muted">未公開</td></tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>
