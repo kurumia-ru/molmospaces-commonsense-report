@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MugBallPick — ボールが入っているマグを取る</title>
+  <title>MugBallPick — π0.5 ゼロショット 0/5</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -76,217 +76,87 @@
 </head>
 <body>
 <main>
-  <h1>ボールが入っているマグを取る</h1>
+  <h1>MugBallPick</h1>
   <p class="lead">
-    MolmoSpaces CommonSense の MugBallPick。
-    逆さまのマグが 2 つあり、片方の下にボールがある。
-    「ボールが下にあるマグ」を取り上げる課題。
-    遠隔操作なし。DROID planner と π0.5 ゼロショット（<code>pi05_droid_jointpos</code>、pi05_base ではない）。p-ws-40、2026-11-09。
-  </p>
-  <p class="muted">
-    論文の 8 課題のうち 1 課題。Hugging Face の 13 TB は落としていない。
+    逆さまのマグが 2 つ。片方の下にボールがある。
+    指示は <code>Pick up the mug with the ball under it.</code>
+    MolmoSpaces CommonSense · iTHOR · DROID Franka。p-ws-40、2026-11-09。
   </p>
 
-  <h2>条件</h2>
-  <table class="kv">
-    <tr><th>課題</th><td>MugBallPick（覆い / 物体の永続性）</td></tr>
-    <tr><th>指示</th><td><code>Pick up the mug with the ball under it.</code></td></tr>
-    <tr><th>環境</th><td>MolmoSpaces · iTHOR（Objaverse なし）</td></tr>
-    <tr><th>ロボット</th><td>DROID Franka FR3 + Robotiq</td></tr>
-    <tr><th>操作</th><td>oracle PickPlannerPolicy</td></tr>
-    <tr><th>成功</th><td>ボール付きマグを把持して持ち上げる</td></tr>
-    <tr><th>サーバー</th><td>p-ws-40 · GPU 6（physnorm 学習の GPU 4 / 7 は未使用）</td></tr>
-    <tr><th>アセット</th><td>オンデマンド約 13 GB。全データ 13 TB は未取得</td></tr>
-  </table>
-
-  <h2>結果</h2>
+  <h2>何を測ったか</h2>
   <table>
     <thead>
-      <tr><th>実行</th><th>家</th><th>成功</th><th>ログ</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Run 1 · seed 2</td><td>1</td><td class="bad">0 / 0</td><td>リフト IK 失敗、把持後にスリップ</td></tr>
-      <tr><td>Run 2 · seed 7</td><td>5</td><td class="ok">2 / 2</td><td>配置エラーのあとリトライ成功</td></tr>
-      <tr><td>Run 2 · seed 7</td><td>10</td><td class="ok">2 / 2</td><td>途中 1 本はリフト IK 失敗</td></tr>
-      <tr><td>Run 2 · seed 7</td><td>15</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
-      <tr><td>Run 2 · seed 7</td><td>20</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
-      <tr><td>Run 2 · seed 7</td><td>25</td><td class="muted">0 / 0</td><td>配置サンプリング失敗</td></tr>
-    </tbody>
-  </table>
-  <p class="muted">
-    成功軌跡だけ保存しているので、成功率 100% は「残した軌跡のうち成功した割合」。
-    試行全体ではない。本実行は 333 秒。
-  </p>
-
-  <h2>動画（house 5 episode 0）</h2>
-  <figure>
-    <video controls playsinline autoplay muted loop>
-      <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
-    </video>
-    <figcaption>左: exo · 右: wrist · 約 9 秒</figcaption>
-  </figure>
-  <div class="grid">
-    <figure>
-      <video controls playsinline>
-        <source src="house5_ep0_exo.mp4" type="video/mp4" />
-      </video>
-      <figcaption>exo</figcaption>
-    </figure>
-    <figure>
-      <video controls playsinline>
-        <source src="house5_ep0_wrist.mp4" type="video/mp4" />
-      </video>
-      <figcaption>wrist</figcaption>
-    </figure>
-  </div>
-
-  <h2>静止画</h2>
-  <div class="grid3">
-    <figure>
-      <img src="start_exo.jpg" alt="開始時の exo。逆さまのマグ 2 つと黄色いボール。" />
-      <figcaption>開始。逆さまのマグ 2 つ。</figcaption>
-    </figure>
-    <figure>
-      <img src="lift_exo.jpg" alt="マグを持ち上げている exo。" />
-      <figcaption>持ち上げ。planner が把持してリフト。</figcaption>
-    </figure>
-    <figure>
-      <img src="lift_wrist.jpg" alt="手首カメラからマグを掴んでいる。" />
-      <figcaption>wrist。グリッパがマグを保持。</figcaption>
-    </figure>
-  </div>
-
-  <h2>ほかの成功クリップ</h2>
-  <div class="grid">
-    <figure>
-      <video controls playsinline>
-        <source src="house5_ep1_exo.mp4" type="video/mp4" />
-      </video>
-      <figcaption>house 5 episode 1 · exo</figcaption>
-    </figure>
-    <figure>
-      <video controls playsinline>
-        <source src="house10_ep0_exo.mp4" type="video/mp4" />
-      </video>
-      <figcaption>house 10 episode 0 · exo</figcaption>
-    </figure>
-  </div>
-
-  <h2>失敗の中身</h2>
-  <table>
-    <thead>
-      <tr><th></th><th>内容</th><th>どこ</th></tr>
+      <tr><th></th><th>中身</th><th>結果</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>IK</td>
-        <td>高い iTHOR カウンター（マグ z ≈ 1.26 m）でリフト姿勢が解けない</td>
-        <td>家 1 · 家 10</td>
+        <td>π0.5 ゼロショット</td>
+        <td>画像と指示だけ。<code>pi05_droid_jointpos</code>（<code>pi05_base</code> ではない）</td>
+        <td class="bad">0 / 5</td>
       </tr>
       <tr>
-        <td>把持</td>
-        <td>持ち上げ中にマグが滑る（指間距離 0.00155 &lt; 0.002）</td>
-        <td>家 1</td>
-      </tr>
-      <tr>
-        <td>配置</td>
-        <td>マグを置けない家がある</td>
-        <td>家 15 · 20 · 25</td>
+        <td>IK planner</td>
+        <td>シミュレータの真の物体位置を見て IK で掴んで上げる。学習ではない。課題が動くかの確認</td>
+        <td class="muted">届く家では成功する（当たり前）</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>π0.5 ゼロショット</h2>
+  <h2>π0.5 ゼロショット（本番）</h2>
   <p>
-    公式 CommonSense のゼロショットは <code>pi05_base</code> ではない。
-    DROID の joint-position で finetune した公開 VLA <code>pi05_droid_jointpos</code>
-    （<code>gs://openpi-assets/checkpoints/pi05_droid_jointpos</code>、約 11.6 GiB）。
-    websocket サーバ port 8080、<code>policy_dt_ms=66</code>（約 15.15 Hz）、horizon 500。
+    公開 DROID joint-pos π0.5。カメラと「ボールの下のマグを取れ」だけ見て関節を出す。
+    5 episode ともマグを取り上げていない。フライパンやシンクへ寄って終わる。
   </p>
-  <table class="kv">
-    <tr><th>モデル</th><td><code>pi05_droid_jointpos</code>（π0.5 · DROID joint pos）</td></tr>
-    <tr><th>使っていない</th><td><code>pi05_base</code>（LIBERO / ALOHA 用の汎用 π0.5。action space が違う）</td></tr>
-    <tr><th>指示</th><td><code>Pick up the mug with the ball under it.</code></td></tr>
-    <tr><th>試行</th><td>iTHOR houses 5, 6, 7, 8, 9, 10, 11, 12 · 各 1 episode</td></tr>
-    <tr><th>成功</th><td class="bad">0 / 5</td></tr>
-    <tr><th>サンプリング失敗</th><td>houses 5, 7, 12（numpy 1.26 に下がったあと配置 RNG が planner 実行時とずれた）</td></tr>
-  </table>
-  <table>
-    <thead>
-      <tr><th>家</th><th>成功</th><th>内容</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>5</td><td class="muted">0 / 0</td><td>ロボット配置失敗</td></tr>
-      <tr><td>10</td><td class="bad">0 / 1</td><td>シンク側へリーチ。マグは触らない</td></tr>
-      <tr><td>6</td><td class="bad">0 / 1</td><td>奥のフライパンへ寄る。逆さまマグはそのまま</td></tr>
-      <tr><td>7</td><td class="muted">0 / 0</td><td>配置 / 可視性失敗</td></tr>
-      <tr><td>8</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
-      <tr><td>9</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
-      <tr><td>11</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
-      <tr><td>12</td><td class="muted">0 / 0</td><td>ロボット配置失敗</td></tr>
-    </tbody>
-  </table>
-  <p class="muted">
-    各成功判定つき episode は 501 フレーム · 33 秒（500 × 66 ms）。成功率 0%。
-    planner が同じ課題で 4 / 4 成功した家でも、ゼロショットはマグを取り上げていない。
-  </p>
-
-  <h2>ゼロショット動画</h2>
   <div class="grid">
     <figure>
       <video controls playsinline>
         <source src="zeroshot/house6_exo.mp4" type="video/mp4" />
       </video>
-      <figcaption>house 6 · exo · フライパンへ寄って終わる</figcaption>
+      <figcaption>house 6。フライパンへ寄る。マグはそのまま</figcaption>
     </figure>
     <figure>
       <video controls playsinline>
         <source src="zeroshot/house10_exo.mp4" type="video/mp4" />
       </video>
-      <figcaption>house 10 · exo · シンク側。マグは未把持</figcaption>
+      <figcaption>house 10。シンク側。マグは未把持</figcaption>
     </figure>
   </div>
-  <div class="grid">
-    <figure>
-      <video controls playsinline>
-        <source src="zeroshot/house9_exo.mp4" type="video/mp4" />
-      </video>
-      <figcaption>house 9 · exo</figcaption>
-    </figure>
-    <figure>
-      <video controls playsinline>
-        <source src="zeroshot/house11_exo.mp4" type="video/mp4" />
-      </video>
-      <figcaption>house 11 · exo</figcaption>
-    </figure>
-  </div>
-
-  <h2>ゼロショット静止画（house 6）</h2>
   <div class="grid3">
     <figure>
       <img src="zeroshot/house6_start.jpg" alt="開始。逆さまマグ 2 つ。" />
-      <figcaption>開始。逆さまマグ 2 つ。</figcaption>
+      <figcaption>開始</figcaption>
     </figure>
     <figure>
       <img src="zeroshot/house6_mid.jpg" alt="途中。グリッパがフライパンへ。" />
-      <figcaption>途中。グリッパがフライパンへ。</figcaption>
+      <figcaption>途中。フライパンへ</figcaption>
     </figure>
     <figure>
-      <img src="zeroshot/house6_end.jpg" alt="終了。マグはテーブルに残ったまま。" />
-      <figcaption>終了。マグは残ったまま。</figcaption>
+      <img src="zeroshot/house6_end.jpg" alt="終了。マグは残ったまま。" />
+      <figcaption>終了。マグは残ったまま</figcaption>
     </figure>
   </div>
+  <p class="muted">
+    ほか 3 本（house 8, 9, 11）も同様に失敗。配置できなかった家（5, 7, 12）は未評価。
+    各 episode 33 秒（500 step × 66 ms）。
+  </p>
+
+  <h2>IK planner（環境が動くかの確認）</h2>
+  <p>
+    正解のマグ位置が分かっているので、届くカウンターなら掴めて当然。
+    論文のベースラインではない。house 5 / 10 で 4 本成功。高いカウンターでは IK が解けないか、持ち上げ中に滑る。
+  </p>
+  <figure>
+    <video controls playsinline muted loop>
+      <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
+    </video>
+    <figcaption>house 5。左 exo · 右 wrist。IK で掴んで上げる</figcaption>
+  </figure>
 
   <h2>まだやっていないこと</h2>
-  <table>
-    <thead>
-      <tr><th></th><th>状態</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Pick Occlusion など残りの CommonSense 課題</td><td class="muted">未着手</td></tr>
-      <tr><td>公式 7000 JSON</td><td class="muted">未公開</td></tr>
-    </tbody>
-  </table>
+  <ul class="muted">
+    <li>残りの CommonSense 課題</li>
+    <li>公式 7000 JSON（未公開）</li>
+  </ul>
 </main>
 </body>
 </html>
