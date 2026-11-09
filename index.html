@@ -81,7 +81,7 @@
     MolmoSpaces CommonSense の MugBallPick。
     逆さまのマグが 2 つあり、片方の下にボールがある。
     「ボールが下にあるマグ」を取り上げる課題。
-    遠隔操作なし。DROID planner。p-ws-40、2026-11-09。
+    遠隔操作なし。DROID planner と π0.5 ゼロショット（<code>pi05_droid_jointpos</code>、pi05_base ではない）。p-ws-40、2026-11-09。
   </p>
   <p class="muted">
     論文の 8 課題のうち 1 課題。Hugging Face の 13 TB は落としていない。
@@ -196,13 +196,94 @@
     </tbody>
   </table>
 
+  <h2>π0.5 ゼロショット</h2>
+  <p>
+    公式 CommonSense のゼロショットは <code>pi05_base</code> ではない。
+    DROID の joint-position で finetune した公開 VLA <code>pi05_droid_jointpos</code>
+    （<code>gs://openpi-assets/checkpoints/pi05_droid_jointpos</code>、約 11.6 GiB）。
+    websocket サーバ port 8080、<code>policy_dt_ms=66</code>（約 15.15 Hz）、horizon 500。
+  </p>
+  <table class="kv">
+    <tr><th>モデル</th><td><code>pi05_droid_jointpos</code>（π0.5 · DROID joint pos）</td></tr>
+    <tr><th>使っていない</th><td><code>pi05_base</code>（LIBERO / ALOHA 用の汎用 π0.5。action space が違う）</td></tr>
+    <tr><th>指示</th><td><code>Pick up the mug with the ball under it.</code></td></tr>
+    <tr><th>試行</th><td>iTHOR houses 5, 6, 7, 8, 9, 10, 11, 12 · 各 1 episode</td></tr>
+    <tr><th>成功</th><td class="bad">0 / 5</td></tr>
+    <tr><th>サンプリング失敗</th><td>houses 5, 7, 12（numpy 1.26 に下がったあと配置 RNG が planner 実行時とずれた）</td></tr>
+  </table>
+  <table>
+    <thead>
+      <tr><th>家</th><th>成功</th><th>内容</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5</td><td class="muted">0 / 0</td><td>ロボット配置失敗</td></tr>
+      <tr><td>10</td><td class="bad">0 / 1</td><td>シンク側へリーチ。マグは触らない</td></tr>
+      <tr><td>6</td><td class="bad">0 / 1</td><td>奥のフライパンへ寄る。逆さまマグはそのまま</td></tr>
+      <tr><td>7</td><td class="muted">0 / 0</td><td>配置 / 可視性失敗</td></tr>
+      <tr><td>8</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
+      <tr><td>9</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
+      <tr><td>11</td><td class="bad">0 / 1</td><td>horizon 満了 · 失敗</td></tr>
+      <tr><td>12</td><td class="muted">0 / 0</td><td>ロボット配置失敗</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">
+    各成功判定つき episode は 501 フレーム · 33 秒（500 × 66 ms）。成功率 0%。
+    planner が同じ課題で 4 / 4 成功した家でも、ゼロショットはマグを取り上げていない。
+  </p>
+
+  <h2>ゼロショット動画</h2>
+  <div class="grid">
+    <figure>
+      <video controls playsinline>
+        <source src="zeroshot/house6_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 6 · exo · フライパンへ寄って終わる</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline>
+        <source src="zeroshot/house10_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 10 · exo · シンク側。マグは未把持</figcaption>
+    </figure>
+  </div>
+  <div class="grid">
+    <figure>
+      <video controls playsinline>
+        <source src="zeroshot/house9_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 9 · exo</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline>
+        <source src="zeroshot/house11_exo.mp4" type="video/mp4" />
+      </video>
+      <figcaption>house 11 · exo</figcaption>
+    </figure>
+  </div>
+
+  <h2>ゼロショット静止画（house 6）</h2>
+  <div class="grid3">
+    <figure>
+      <img src="zeroshot/house6_start.jpg" alt="開始。逆さまマグ 2 つ。" />
+      <figcaption>開始。逆さまマグ 2 つ。</figcaption>
+    </figure>
+    <figure>
+      <img src="zeroshot/house6_mid.jpg" alt="途中。グリッパがフライパンへ。" />
+      <figcaption>途中。グリッパがフライパンへ。</figcaption>
+    </figure>
+    <figure>
+      <img src="zeroshot/house6_end.jpg" alt="終了。マグはテーブルに残ったまま。" />
+      <figcaption>終了。マグは残ったまま。</figcaption>
+    </figure>
+  </div>
+
   <h2>まだやっていないこと</h2>
   <table>
     <thead>
       <tr><th></th><th>状態</th></tr>
     </thead>
     <tbody>
-      <tr><td>π0.5 ゼロショット</td><td class="muted">未着手</td></tr>
+      <tr><td>π0.5 ゼロショット · MugBallPick</td><td>5 episode · 成功率 0%（<code>pi05_droid_jointpos</code>）</td></tr>
       <tr><td>Pick Occlusion など残りの CommonSense 課題</td><td class="muted">未着手</td></tr>
       <tr><td>公式 7000 JSON</td><td class="muted">未公開</td></tr>
     </tbody>
