@@ -86,8 +86,8 @@
       <tr>
         <td>Pick with Occlusion</td>
         <td>対象の周り 10 cm に 5 個の物</td>
-        <td class="bad">0 / 6（机から落ちたシーンは除外）</td>
-        <td class="muted">6 / 7（真の位置で IK。成功して当然）</td>
+        <td class="bad">0 / 6</td>
+        <td class="muted">6 / 7</td>
       </tr>
       <tr>
         <td>Pick with Covering</td>
@@ -98,14 +98,14 @@
       <tr>
         <td>Pick with Containment</td>
         <td>閉じた引き出しの中の物を取る（開く → 取る）</td>
-        <td class="muted">未実施（公式 JSON 未公開。論文の π0.5 は 0%）</td>
-        <td class="muted">引き出しを開く段階だけ 4 / 7</td>
+        <td class="muted">未実施</td>
+        <td class="muted">引き出しを開くまで 4 / 7</td>
       </tr>
       <tr>
         <td>Pick with Object Permanence</td>
         <td>ボールの下のマグを取る（MugBallPick）</td>
         <td class="bad">0 / 5</td>
-        <td class="muted">届く家では成功</td>
+        <td class="muted">成功（届く家）</td>
       </tr>
     </tbody>
   </table>
@@ -115,25 +115,31 @@
   </p>
 
   <h2>π0.5 ゼロショット（本番）</h2>
-  <p>画像と指示だけ。対象は取れていない。机の上の物は残る。</p>
+  <p>画像と指示だけ。どの課題も対象は取れていない。</p>
   <div class="grid">
     <figure>
       <video controls playsinline>
         <source src="phys/occlusion_zs_stable.mp4" type="video/mp4" />
       </video>
-      <figcaption>遮蔽 · house 5。DROID の初期姿勢から机へ伸びる。物は落ちない。取れてはいない</figcaption>
+      <figcaption>
+        遮蔽 · house 5。周りにフライパンやカトラリがある対象を取る。
+        腕はフライパンの上まで行くが掴まない。対象は机に残る。
+      </figcaption>
     </figure>
     <figure>
       <video controls playsinline>
         <source src="phys/covering_zs_house5.mp4" type="video/mp4" />
       </video>
-      <figcaption>被覆 · house 5。シンク側。0/3</figcaption>
+      <figcaption>
+        被覆 · house 5。ぬいぐるみの下にある対象を取る。
+        被覆には触れず、シンクの中へ手を伸ばして終わる。
+      </figcaption>
     </figure>
   </div>
 
   <h2>IK planner（環境が動くかの確認）</h2>
   <p>
-    シミュレータの真の位置で IK するだけなので、届く家なら掴めて当然。論文の数字ではない。
+    真の位置で IK する。論文の数字ではない。環境が動くかの確認。
   </p>
   <div class="grid">
     <figure>
@@ -153,26 +159,28 @@
     <video controls playsinline muted>
       <source src="phys/containment_house5.mp4" type="video/mp4" />
     </video>
-    <figcaption>収納の 1 段階目。閉じた引き出しの取っ手を掴んで開ける。中の物を取る 2 段階目は公式 JSON 待ち</figcaption>
+    <figcaption>収納の 1 段階目。閉じた引き出しの取っ手を掴んで開ける。中の物を取るところまでは未実施</figcaption>
   </figure>
 
   <h2>物体永続性（以前の MugBallPick）</h2>
   <p>
     逆さまマグ 2 つ、片方の下にボール。<code>Pick up the mug with the ball under it.</code>
-    π0.5 は 0/5。フライパンやシンクへ寄る。
   </p>
   <div class="grid">
     <figure>
       <video controls playsinline>
         <source src="zeroshot/house6_exo.mp4" type="video/mp4" />
       </video>
-      <figcaption>ゼロショット · house 6</figcaption>
+      <figcaption>
+        ゼロショット · house 6。ボールの入ったマグを取る。
+        マグには触れず、奥のフライパンへ寄って終わる。
+      </figcaption>
     </figure>
     <figure>
       <video controls playsinline muted>
         <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
       </video>
-      <figcaption>IK planner · house 5（確認用）</figcaption>
+      <figcaption>IK planner · house 5。ボールの入ったマグを掴んで持ち上げる</figcaption>
     </figure>
   </div>
 
