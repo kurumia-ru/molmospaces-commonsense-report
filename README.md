@@ -1,6 +1,6 @@
-# MolmoSpaces CommonSense — MugBallPick
+# MolmoSpaces CommonSense
 
-π0.5 ゼロショット（`pi05_droid_jointpos`）は 0/5。
-IK planner は真の物体位置を使う確認用で、学習結果ではない。
+物理的推論（遮蔽・被覆・収納）と物体永続性（MugBallPick）。
+π0.5 ゼロショットは `pi05_droid_jointpos`。IK planner は確認用。
 
 GitHub Pages: https://kurumia-ru.github.io/molmospaces-commonsense-report/

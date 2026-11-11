@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MugBallPick — π0.5 ゼロショット 0/5</title>
+  <title>MolmoSpaces-CommonSense — 物理的推論</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -31,7 +31,7 @@
     main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3.5rem; }
     h1 { font-size: 1.45rem; margin: 0 0 0.4rem; }
     h2 { font-size: 1.08rem; margin: 1.8rem 0 0.6rem; }
-    p.lead { color: var(--muted); margin: 0 0 1.1rem; max-width: 44rem; }
+    p.lead { color: var(--muted); margin: 0 0 1.1rem; max-width: 48rem; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -42,7 +42,6 @@
     }
     th, td { padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
     th { background: #e5ebe7; font-weight: 600; }
-    table.kv th { width: 9.5rem; }
     .ok { color: var(--ok); font-weight: 700; }
     .bad { color: var(--bad); font-weight: 700; }
     .muted { color: var(--muted); }
@@ -64,98 +63,123 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 0.7rem;
     }
-    .grid3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.7rem;
-    }
     @media (max-width: 720px) {
-      .grid, .grid3 { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 <main>
-  <h1>MugBallPick</h1>
+  <h1>MolmoSpaces-CommonSense</h1>
   <p class="lead">
-    逆さまのマグが 2 つ。片方の下にボールがある。
-    指示は <code>Pick up the mug with the ball under it.</code>
-    MolmoSpaces CommonSense · iTHOR · DROID Franka。p-ws-40、2026-11-09。
+    論文（<a href="https://arxiv.org/abs/2610.41377">arXiv:2610.41377</a>）の物理的推論は Baillargeon の 3 分類。
+    対象の周りに物がある（遮蔽）、対象が何かの下にある（被覆）、対象が引き出しの中にある（収納）。
+    先にやった MugBallPick は被覆ではなく物体永続性。
   </p>
 
-  <h2>何を測ったか</h2>
+  <h2>今回やったこと</h2>
   <table>
     <thead>
-      <tr><th></th><th>中身</th><th>結果</th></tr>
+      <tr><th>論文の課題</th><th>中身</th><th>π0.5 ゼロショット</th><th>IK planner（確認用）</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>π0.5 ゼロショット</td>
-        <td>画像と指示だけ。<code>pi05_droid_jointpos</code>（<code>pi05_base</code> ではない）</td>
-        <td class="bad">0 / 5</td>
+        <td>Pick with Occlusion</td>
+        <td>対象の周り 10 cm に 5 個の物</td>
+        <td class="bad">0 / 3</td>
+        <td class="muted">6 / 7（真の位置で IK。成功して当然）</td>
       </tr>
       <tr>
-        <td>IK planner</td>
-        <td>シミュレータの真の物体位置を見て IK で掴んで上げる。学習ではない。課題が動くかの確認</td>
-        <td class="muted">届く家では成功する（当たり前）</td>
+        <td>Pick with Covering</td>
+        <td>対象の上に物を載せる</td>
+        <td class="bad">0 / 3</td>
+        <td class="muted">3 / 7</td>
+      </tr>
+      <tr>
+        <td>Pick with Containment</td>
+        <td>閉じた引き出しの中の物を取る（開く → 取る）</td>
+        <td class="muted">未実施（公式 JSON 未公開。論文の π0.5 は 0%）</td>
+        <td class="muted">引き出しを開く段階だけ 4 / 7</td>
+      </tr>
+      <tr>
+        <td>Pick with Object Permanence</td>
+        <td>ボールの下のマグを取る（MugBallPick）</td>
+        <td class="bad">0 / 5</td>
+        <td class="muted">届く家では成功</td>
       </tr>
     </tbody>
   </table>
+  <p class="muted">
+    ゼロショットは <code>pi05_droid_jointpos</code>。<code>pi05_base</code> ではない。
+    論文の大規模評価では遮蔽 14%、被覆 11%、収納 0%。こちらは少数 episode。
+  </p>
 
   <h2>π0.5 ゼロショット（本番）</h2>
+  <p>画像と指示だけ。対象は取れていない。物を落としたり、シンク側へ寄って終わる。</p>
+  <div class="grid">
+    <figure>
+      <video controls playsinline>
+        <source src="phys/occlusion_zs_house5.mp4" type="video/mp4" />
+      </video>
+      <figcaption>遮蔽 · house 5。像を落として終わる。0/3</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline>
+        <source src="phys/covering_zs_house5.mp4" type="video/mp4" />
+      </video>
+      <figcaption>被覆 · house 5。シンク側。0/3</figcaption>
+    </figure>
+  </div>
+
+  <h2>IK planner（環境が動くかの確認）</h2>
   <p>
-    公開 DROID joint-pos π0.5。カメラと「ボールの下のマグを取れ」だけ見て関節を出す。
-    5 episode ともマグを取り上げていない。フライパンやシンクへ寄って終わる。
+    シミュレータの真の位置で IK するだけなので、届く家なら掴めて当然。論文の数字ではない。
+  </p>
+  <div class="grid">
+    <figure>
+      <video controls playsinline muted>
+        <source src="phys/occlusion_house5.mp4" type="video/mp4" />
+      </video>
+      <figcaption>遮蔽。周りの物を避けて対象を取る</figcaption>
+    </figure>
+    <figure>
+      <video controls playsinline muted>
+        <source src="phys/covering_house5.mp4" type="video/mp4" />
+      </video>
+      <figcaption>被覆。上に載った物の間から取る</figcaption>
+    </figure>
+  </div>
+  <figure>
+    <video controls playsinline muted>
+      <source src="phys/containment_house5.mp4" type="video/mp4" />
+    </video>
+    <figcaption>収納の 1 段階目。閉じた引き出しの取っ手を掴んで開ける。中の物を取る 2 段階目は公式 JSON 待ち</figcaption>
+  </figure>
+
+  <h2>物体永続性（以前の MugBallPick）</h2>
+  <p>
+    逆さまマグ 2 つ、片方の下にボール。<code>Pick up the mug with the ball under it.</code>
+    π0.5 は 0/5。フライパンやシンクへ寄る。
   </p>
   <div class="grid">
     <figure>
       <video controls playsinline>
         <source src="zeroshot/house6_exo.mp4" type="video/mp4" />
       </video>
-      <figcaption>house 6。フライパンへ寄る。マグはそのまま</figcaption>
+      <figcaption>ゼロショット · house 6</figcaption>
     </figure>
     <figure>
-      <video controls playsinline>
-        <source src="zeroshot/house10_exo.mp4" type="video/mp4" />
+      <video controls playsinline muted>
+        <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
       </video>
-      <figcaption>house 10。シンク側。マグは未把持</figcaption>
+      <figcaption>IK planner · house 5（確認用）</figcaption>
     </figure>
   </div>
-  <div class="grid3">
-    <figure>
-      <img src="zeroshot/house6_start.jpg" alt="開始。逆さまマグ 2 つ。" />
-      <figcaption>開始</figcaption>
-    </figure>
-    <figure>
-      <img src="zeroshot/house6_mid.jpg" alt="途中。グリッパがフライパンへ。" />
-      <figcaption>途中。フライパンへ</figcaption>
-    </figure>
-    <figure>
-      <img src="zeroshot/house6_end.jpg" alt="終了。マグは残ったまま。" />
-      <figcaption>終了。マグは残ったまま</figcaption>
-    </figure>
-  </div>
-  <p class="muted">
-    ほか 3 本（house 8, 9, 11）も同様に失敗。配置できなかった家（5, 7, 12）は未評価。
-    各 episode 33 秒（500 step × 66 ms）。
-  </p>
-
-  <h2>IK planner（環境が動くかの確認）</h2>
-  <p>
-    正解のマグ位置が分かっているので、届くカウンターなら掴めて当然。
-    論文のベースラインではない。house 5 / 10 で 4 本成功。高いカウンターでは IK が解けないか、持ち上げ中に滑る。
-  </p>
-  <figure>
-    <video controls playsinline muted loop>
-      <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
-    </video>
-    <figcaption>house 5。左 exo · 右 wrist。IK で掴んで上げる</figcaption>
-  </figure>
 
   <h2>まだやっていないこと</h2>
   <ul class="muted">
-    <li>残りの CommonSense 課題</li>
-    <li>公式 7000 JSON（未公開）</li>
+    <li>収納の本番（閉じた引き出しの中の物を取る。公式 7000 JSON が未公開）</li>
+    <li>Pack with Occlusion / Covering、affordance、stack</li>
   </ul>
 </main>
 </body>
