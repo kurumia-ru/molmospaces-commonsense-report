@@ -115,15 +115,18 @@
   </p>
 
   <h2>π0.5 ゼロショット（本番）</h2>
-  <p>画像と指示だけ。どの課題も対象は取れていない。</p>
+  <p>
+    画像と指示だけ。どの課題も対象は取れていない。
+    house は iTHOR のキッチン番号で、物の配置は episode ごとに違う。下の IK と同じ配置ではない。
+  </p>
   <div class="grid">
     <figure>
       <video controls playsinline>
         <source src="phys/occlusion_zs_stable.mp4" type="video/mp4" />
       </video>
       <figcaption>
-        遮蔽 · house 5。周りにフライパンやカトラリがある対象を取る。
-        腕はフライパンの上まで行くが掴まない。対象は机に残る。
+        遮蔽 · house 5。<code>Pick up the knife</code>。
+        対象は黄色い柄のナイフ（フライパンの隣）。腕はフライパンの上へ行き、ナイフは机に残る。
       </figcaption>
     </figure>
     <figure>
@@ -131,28 +134,29 @@
         <source src="phys/covering_zs_house5.mp4" type="video/mp4" />
       </video>
       <figcaption>
-        被覆 · house 5。ぬいぐるみの下にある対象を取る。
-        被覆には触れず、シンクの中へ手を伸ばして終わる。
+        被覆 · house 5。<code>Pick up the peppershaker</code>。
+        対象はぬいぐるみの下のペッパーシェイカー。触れず、シンクの中へ手を伸ばして終わる。
       </figcaption>
     </figure>
   </div>
 
   <h2>IK planner（環境が動くかの確認）</h2>
   <p>
-    真の位置で IK する。論文の数字ではない。環境が動くかの確認。
+    真の位置で IK する。論文の数字ではない。
+    被覆はゼロショットと同じ配置。遮蔽は同じ house 5 でも別サンプル（マグ）。
   </p>
   <div class="grid">
     <figure>
       <video controls playsinline muted>
         <source src="phys/occlusion_house5.mp4" type="video/mp4" />
       </video>
-      <figcaption>遮蔽。周りの物を避けて対象を取る</figcaption>
+      <figcaption>遮蔽 · house 5。<code>Pick up the mug</code>。赤い花瓶などの隣のマグを掴んで持ち上げる。上のゼロショット（ナイフ）とは別配置</figcaption>
     </figure>
     <figure>
       <video controls playsinline muted>
         <source src="phys/covering_house5.mp4" type="video/mp4" />
       </video>
-      <figcaption>被覆。上に載った物の間から取る</figcaption>
+      <figcaption>被覆 · house 5。<code>Pick up the peppershaker</code>。ゼロショットと同じ配置。ぬいぐるみの下からペッパーシェイカーを取る</figcaption>
     </figure>
   </div>
   <figure>
@@ -180,7 +184,7 @@
       <video controls playsinline muted>
         <source src="house5_ep0_side_by_side.mp4" type="video/mp4" />
       </video>
-      <figcaption>IK planner · house 5。ボールの入ったマグを掴んで持ち上げる</figcaption>
+      <figcaption>IK planner · house 5。左のゼロショット（house 6）とは別の家。ボールの入ったマグを掴んで持ち上げる</figcaption>
     </figure>
   </div>
 
